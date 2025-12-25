@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🎄 Merry Christmas!</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+    margin: 0;
+    background: radial-gradient(circle at center, #0a1a2a, #000);
+    overflow: hidden;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    cursor: pointer;
+}
+
+h1 {
+    font-size: 4rem;
+    margin-top: 28vh;
+    text-shadow: 0 0 20px gold, 0 0 40px red;
+    animation: glow 1.5s infinite alternate;
+}
+
+h2 {
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px gold; }
+    to { text-shadow: 0 0 40px red, 0 0 80px gold; }
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.snow {
+    position: absolute;
+    top: -10px;
+    color: white;
+    font-size: 1em;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to { transform: translateY(110vh); }
+}
+</style>
+</head>
+<body>
+
+<h1>🎄 MERRY CHRISTMAS 🎄</h1>
+<h2 id="name"></h2>
+<p>Tap / Click anywhere 💥</p>
+
+<audio autoplay loop>
+  <source src="https://cdn.pixabay.com/audio/2022/12/06/audio_8f61f9f8be.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// 🎁 Personal Name from URL
+const params = new URLSearchParams(window.location.search);
+const to = params.get("to");
+if (to) {
+    document.getElementById("name").textContent = "To: " + decodeURIComponent(to);
+}
+
+// 💥 Explosion
+function explode(x, y) {
+    for (let i = 0; i < 160; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        document.body.appendChild(p);
+
+        p.style.background = `hsl(${Math.random()*360},100%,60%)`;
+        p.style.left = x + 'px';
+        p.style.top = y + 'px';
+
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 9 + 3;
+        const dx = Math.cos(angle) * speed;
+        const dy = Math.sin(angle) * speed;
+
+        let life = 0;
+        const anim = setInterval(() => {
+            life++;
+            p.style.left = p.offsetLeft + dx + 'px';
+            p.style.top = p.offsetTop + dy + 'px';
+            p.style.opacity = 1 - life / 60;
+            if (life > 60) {
+                clearInterval(anim);
+                p.remove();
+            }
+        }, 16);
+    }
+}
+
+document.addEventListener('click', e => explode(e.clientX, e.clientY));
+document.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    explode(t.clientX, t.clientY);
+});
+
+// ❄ Snow
+function snow() {
+    const s = document.createElement('div');
+    s.className = 'snow';
+    s.textContent = '❄';
+    s.style.left = Math.random() * window.innerWidth + 'px';
+    s.style.animationDuration = Math.random() * 5 + 5 + 's';
+    s.style.opacity = Math.random();
+    s.style.fontSize = Math.random() * 15 + 10 + 'px';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 10000);
+}
+setInterval(snow, 200);
+</script>
+
+</body>
+</html>
